@@ -61,9 +61,11 @@ X_human = cv.fit_transform(human_texts)
 X_chimp = cv.transform(chimp_texts)
 X_dog = cv.transform(dog_texts)
 
-
+print("human")
 print(X_human.shape)
+print("chimp")
 print(X_chimp.shape)
+print("dog")
 print(X_dog.shape)
 
 
@@ -81,9 +83,13 @@ X_train_chimp, X_test_chimp, y_train_chimp, y_test_chimp = train_test_split(X_ch
                                                                             test_size=0.20,
                                                                             random_state=42)
 
+# Do the same for dog 
+X_train_dog, X_test_dog, y_train_dog, y_test_dog = train_test_split(X_dog, y_data_dog,
+                                                            test_size=0.20, random_state=42)
 
-print(X_train_human.shape)
-print(X_test_human.shape)
+
+# print(X_train_human.shape)
+# print(X_test_human.shape)
 
 ### Multinomial Naive Bayes Classifier ###
 # The alpha parameter was determined by grid search previously
@@ -91,24 +97,54 @@ print(X_test_human.shape)
 classifier_human = MultinomialNB(alpha=0.1)
 classifier_human.fit(X_train_human, y_train_human)
 
-classifier_chimp = MultinomialNB(alpha=0.1)
+classifier_chimp = MultinomialNB(alpha=0.15)
 classifier_chimp.fit(X_train_chimp, y_train_chimp)
+
+classifier_dog = MultinomialNB(alpha=0.75)
+classifier_dog.fit(X_train_dog, y_train_dog)
 
 
 y_pred_human = classifier_human.predict(X_test_human)
 
 y_pred_chimp = classifier_chimp.predict(X_test_chimp)
 
+y_pred_dog = classifier_dog.predict(X_test_dog)
+
 
 
 # print("Confusion matrix\n")
 # print(pd.crosstab(pd.Series(y_test_human, name='Actual'), pd.Series(y_pred_human, name='Predicted')))
 
+print("human gene classcification accuracy")
 accuracy, precision, recall, f1 = get_metrics(y_test_human, y_pred_human)
-print("accuracy = %.3f \nprecision = %.3f \nrecall = %.3f \nf1 = %.3f" % (accuracy, precision, recall, f1))
+print("accuracy = %.3f \n" % (accuracy))
 
+print("chimp gene classcification accuracy")
 accuracy, precision, recall, f1 = get_metrics(y_test_chimp, y_pred_chimp)
-print("accuracy = %.3f \nprecision = %.3f \nrecall = %.3f \nf1 = %.3f" % (accuracy, precision, recall, f1))
+print("accuracy = %.3f \n" % (accuracy))
 
+print("dog gene classcification accuracy")
+accuracy, precision, recall, f1 = get_metrics(y_test_dog, y_pred_dog)
+print("accuracy = %.3f \n" % (accuracy))
 
+print("gene similarity test")
+print("human model vs chimp test data")
+y_pred_chimp_on_human = classifier_human.predict(X_chimp)
+accuracy, precision, recall, f1 = get_metrics(y_data_chimp, y_pred_chimp_on_human)
+print("accuracy = %.3f \n" % (accuracy))
+
+print("human model vs dog test data")
+y_pred_dog_on_human = classifier_human.predict(X_dog)
+accuracy, precision, recall, f1 = get_metrics(y_data_dog, y_pred_dog_on_human)
+print("accuracy = %.3f \n" % (accuracy))
+
+print("chimp model vs human test data")
+y_pred_human_on_chimp = classifier_chimp.predict(X_human)
+accuracy, precision, recall, f1 = get_metrics(y_data_human, y_pred_human_on_chimp)
+print("accuracy = %.3f \n" % (accuracy))
+
+print("chimp model vs dog test data")
+y_pred_dog_on_chimp = classifier_chimp.predict(X_dog)
+accuracy, precision, recall, f1 = get_metrics(y_data_dog, y_pred_dog_on_chimp)
+print("accuracy = %.3f \n" % (accuracy))
 
