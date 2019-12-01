@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
 
-# function to convert sequence strings into k-mer words, default size = 6 (hexamer words)
+# Function to convert sequence strings into k-mer words
 def getKmers(sequence, size=6):
     return [sequence[x:x+size].lower() for x in range(len(sequence) - size + 1)]
 
@@ -32,9 +32,7 @@ dog_data = dog_data.drop('sequence', axis=1)
 
 
 
-# Since we are going to use scikit-learn natural language processing tools to do the k-mer counting, 
-# we need to now convert the lists of k-mers for each gene into string sentences of words that 
-# the count vectorizer can use. We can also make a y variable to hold the class labels. Let's do that now.
+# Use scikit-learn natural language processing tools to do k-mer counting, 
 human_texts = list(human_data['words'])
 for item in range(len(human_texts)):
     human_texts[item] = ' '.join(human_texts[item])
@@ -69,9 +67,6 @@ print("dog")
 print(X_dog.shape)
 
 
-# # If we have a look at class balance we can see we have relatively balanced dataset.
-# human_data['class'].value_counts().sort_index().plot.bar()
-
 # Split human dataset into the training and test sets
 X_train_human, X_test_human, y_train_human, y_test_human = train_test_split(X_human, 
                                                     y_data_human, 
@@ -92,8 +87,6 @@ X_train_dog, X_test_dog, y_train_dog, y_test_dog = train_test_split(X_dog, y_dat
 # print(X_test_human.shape)
 
 ### Multinomial Naive Bayes Classifier ###
-# The alpha parameter was determined by grid search previously
-
 classifier_human = MultinomialNB(alpha=0.1)
 classifier_human.fit(X_train_human, y_train_human)
 
@@ -110,10 +103,6 @@ y_pred_chimp = classifier_chimp.predict(X_test_chimp)
 
 y_pred_dog = classifier_dog.predict(X_test_dog)
 
-
-
-# print("Confusion matrix\n")
-# print(pd.crosstab(pd.Series(y_test_human, name='Actual'), pd.Series(y_pred_human, name='Predicted')))
 
 print("human gene classcification accuracy")
 accuracy, precision, recall, f1 = get_metrics(y_test_human, y_pred_human)
